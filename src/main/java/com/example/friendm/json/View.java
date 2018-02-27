@@ -10,7 +10,4 @@ public class View {
 
     public static interface RecipientView extends SuccessView {
     }
-
-    public static interface ExceptionView extends SuccessView {
-    }
 }

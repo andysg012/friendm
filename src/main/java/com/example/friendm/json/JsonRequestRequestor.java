@@ -24,10 +24,10 @@ public class JsonRequestRequestor {
     }
 
     public void validate() throws FriendException {
-        if (requestor == null) throw new FriendException("Request email is empty.");
-        if (requestor.length() == 0) throw new FriendException("Request email is empty string.");
+        if (requestor == null) throw new FriendException("Request requestor is empty.");
+        if (requestor.length() == 0) throw new FriendException("Request requestor is empty string.");
 
-        if (target == null) throw new FriendException("Request email is empty.");
-        if (target.length() == 0) throw new FriendException("Request email is empty string.");
+        if (target == null) throw new FriendException("Request target is empty.");
+        if (target.length() == 0) throw new FriendException("Request target is empty string.");
     }
 }

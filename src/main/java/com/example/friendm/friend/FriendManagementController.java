@@ -1,6 +1,9 @@
 package com.example.friendm.friend;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 import com.example.friendm.json.JsonRequestEmail;
 import com.example.friendm.json.JsonRequestFriends;
@@ -29,7 +32,7 @@ public class FriendManagementController {
     private static final Logger logger = LoggerFactory.getLogger(FriendManagementController.class);
 
     @Autowired
-    UserService userService;
+    FriendManagementService service;
 
     @JsonView(View.SuccessView.class)
     @PostMapping(path = "/connect", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,11 +42,12 @@ public class FriendManagementController {
 
         request.validate();
 
-        User user1 = new User(request.getFriends().get(0));
-        User user2 = new User(request.getFriends().get(1));
+        String email1 = request.getFriends().get(0);
+        String email2 = request.getFriends().get(1);
 
-        userService.saveIfEmailAddressNotExists(user1);
-        userService.saveIfEmailAddressNotExists(user2);
+        logger.info("=== {} {}", email1, email2);
+
+        service.connect(email1, email2);
 
         return ResponseEntity.ok(JsonResponse.SUCCESS);
     }
@@ -56,11 +60,13 @@ public class FriendManagementController {
 
         request.validate();
 
-        User andy = userService.findByEmailAddress("andy@example.com");
+        String email = request.getEmail();
 
-        logger.info("=== {}", andy.toString());
+        logger.info("=== {}", email);
 
-        return ResponseEntity.ok(JsonResponse.friends(Arrays.asList(andy.getEmailAddress())));
+        Set<String> friends = service.getFriends(email);
+
+        return ResponseEntity.ok(JsonResponse.friends(new ArrayList<String>(friends)));
     }
 
     @JsonView(View.FriendView.class)
@@ -71,13 +77,14 @@ public class FriendManagementController {
 
         request.validate();
 
-        User andy = userService.findByEmailAddress("andy@example.com");
-        User john = userService.findByEmailAddress("john@example.com");
+        String email1 = request.getFriends().get(0);
+        String email2 = request.getFriends().get(1);
 
-        logger.info("=== {}", andy.toString());
-        logger.info("=== {}", john.toString());
+        logger.info("=== {} {}", email1, email2);
 
-        return ResponseEntity.ok(JsonResponse.friends(Arrays.asList(andy.getEmailAddress(), john.getEmailAddress())));
+        List<String> commonFriends = service.getCommonFriends(email1, email2);
+
+        return ResponseEntity.ok(JsonResponse.friends(commonFriends));
     }
 
     @JsonView(View.SuccessView.class)
@@ -88,11 +95,12 @@ public class FriendManagementController {
 
         request.validate();
 
-        User lisa = userService.findByEmailAddress("lisa@example.com");
-        User john = userService.findByEmailAddress("john@example.com");
+        String requestor = request.getRequestor();
+        String target = request.getTarget();
 
-        logger.info("=== {}", lisa.toString());
-        logger.info("=== {}", john.toString());
+        logger.info("=== {} {}", requestor, target);
+
+        service.subscribe(requestor, target);
 
         return ResponseEntity.ok(JsonResponse.SUCCESS);
     }
@@ -105,11 +113,12 @@ public class FriendManagementController {
 
         request.validate();
 
-        User andy = userService.findByEmailAddress("andy@example.com");
-        User john = userService.findByEmailAddress("john@example.com");
+        String requestor = request.getRequestor();
+        String target = request.getTarget();
 
-        logger.info("=== {}", andy.toString());
-        logger.info("=== {}", john.toString());
+        logger.info("=== {} {}", requestor, target);
+
+        service.block(requestor, target);
 
         return ResponseEntity.ok(JsonResponse.SUCCESS);
     }
@@ -122,10 +131,13 @@ public class FriendManagementController {
 
         request.validate();
 
-        User john = userService.findByEmailAddress("john@example.com");
+        String sender = request.getSender();
+        String text = request.getText();
 
-        logger.info("=== {}", john.toString());
+        logger.info("=== {} {}", sender, text);
 
-        return ResponseEntity.ok(JsonResponse.recipients(Arrays.asList(john.getEmailAddress())));
+        List<String> recipients = service.broadcast(sender, text);
+
+        return ResponseEntity.ok(JsonResponse.recipients(recipients));
     }
 }

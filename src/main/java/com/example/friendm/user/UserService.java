@@ -9,12 +9,12 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User saveIfEmailAddressNotExists(User paramUser) {
+    public User saveIfEmailAddressNotExists(String emailAddress) {
 
-        User retrievedUser = userRepository.findByEmailAddress(paramUser.getEmailAddress());
+        User retrievedUser = findByEmailAddress(emailAddress);
 
         if (retrievedUser == null) {
-            userRepository.save(paramUser);
+            retrievedUser = userRepository.save(new User(emailAddress));
         }
 
         return retrievedUser;

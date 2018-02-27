@@ -24,7 +24,7 @@ public class FriendResponseEntityExceptionHandler extends ResponseEntityExceptio
             HttpStatus status,
             WebRequest request) {
 
-        logger.info("=== handleExceptionInternal {}", ex.getMessage());
+        logger.error("=== handleExceptionInternal {}", ex.getMessage());
 
         JsonExceptionResponse jsonResponse = JsonExceptionResponse.exception(ex.getMessage());
 
@@ -33,6 +33,8 @@ public class FriendResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     @ExceptionHandler({ Exception.class })
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
+
+        logger.error("=== handleAll {}", ex.getMessage());
 
         JsonExceptionResponse jsonResponse = JsonExceptionResponse.exception(ex.getMessage());
 

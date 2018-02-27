@@ -1,27 +1,27 @@
 package com.example.friendm.user;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import javax.persistence.OneToMany;
 
 @Entity
-@Table(
-    indexes = {
-        @Index(name = "USER_IDX_1", columnList = "emailAddress", unique = true) })
 public class User {
 
     @Id
     @GeneratedValue
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String emailAddress;
 
-    //private List<UserFriends> friends = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserRelationship> friends;
 
     public User() {
     }
@@ -46,8 +46,11 @@ public class User {
         this.emailAddress = emailAddress;
     }
 
-    @Override
-    public String toString() {
-        return String.format("User: { id: %d, emailAddress: %s }", id, emailAddress);
-    }
+    public List<UserRelationship> getFriends() {
+		return friends;
+	}
+
+	public void setFriends(List<UserRelationship> friends) {
+		this.friends = friends;
+	}
 }
