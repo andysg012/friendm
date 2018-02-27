@@ -1,22 +1,26 @@
 package com.example.friendm.friend;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
+import com.example.friendm.json.JsonRequestEmail;
+import com.example.friendm.json.JsonRequestFriends;
+import com.example.friendm.json.JsonRequestRequestor;
+import com.example.friendm.json.JsonRequestSender;
+import com.example.friendm.json.JsonResponse;
+import com.example.friendm.json.View;
 import com.example.friendm.user.User;
 import com.example.friendm.user.UserService;
-import com.example.friendm.view.View;
-import com.example.friendm.view.ViewResponseEntity;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -28,38 +32,44 @@ public class FriendManagementController {
     UserService userService;
 
     @JsonView(View.SuccessView.class)
-    @PostMapping("/connect")
-    public ResponseEntity<ViewResponseEntity> connect() {
+    @PostMapping(path = "/connect", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JsonResponse> connect(@RequestBody JsonRequestFriends request) throws FriendException {
 
         logger.info("=== connect");
 
-        User andy = new User("andy@example.com");
-        User john = new User("john@example.com");
+        request.validate();
 
-        userService.saveIfEmailAddressNotExists(andy);
-        userService.saveIfEmailAddressNotExists(john);
+        User user1 = new User(request.getFriends().get(0));
+        User user2 = new User(request.getFriends().get(1));
 
-        return ResponseEntity.ok(ViewResponseEntity.SUCCESS);
+        userService.saveIfEmailAddressNotExists(user1);
+        userService.saveIfEmailAddressNotExists(user2);
+
+        return ResponseEntity.ok(JsonResponse.SUCCESS);
     }
 
     @JsonView(View.FriendView.class)
-    @GetMapping("/friends")
-    public ResponseEntity<ViewResponseEntity> getFriendsList() {
+    @GetMapping(path = "/friends", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JsonResponse> getFriendsList(@RequestBody JsonRequestEmail request) throws FriendException {
 
         logger.info("=== getFriendsList");
+
+        request.validate();
 
         User andy = userService.findByEmailAddress("andy@example.com");
 
         logger.info("=== {}", andy.toString());
 
-        return ResponseEntity.ok(ViewResponseEntity.friends(Arrays.asList(andy.getEmailAddress())));
+        return ResponseEntity.ok(JsonResponse.friends(Arrays.asList(andy.getEmailAddress())));
     }
 
     @JsonView(View.FriendView.class)
-    @GetMapping("/common")
-    public ResponseEntity<ViewResponseEntity> getCommonFriendsList() {
+    @GetMapping(path = "/common", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JsonResponse> getCommonFriendsList(@RequestBody JsonRequestFriends request) throws FriendException {
 
         logger.info("=== getCommonFriendsList");
+
+        request.validate();
 
         User andy = userService.findByEmailAddress("andy@example.com");
         User john = userService.findByEmailAddress("john@example.com");
@@ -67,14 +77,16 @@ public class FriendManagementController {
         logger.info("=== {}", andy.toString());
         logger.info("=== {}", john.toString());
 
-        return ResponseEntity.ok(ViewResponseEntity.friends(Arrays.asList(andy.getEmailAddress(), john.getEmailAddress())));
+        return ResponseEntity.ok(JsonResponse.friends(Arrays.asList(andy.getEmailAddress(), john.getEmailAddress())));
     }
 
     @JsonView(View.SuccessView.class)
-    @PutMapping("/subscribe")
-    public ResponseEntity<ViewResponseEntity> subscribe() {
+    @PutMapping(path = "/subscribe", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JsonResponse> subscribe(@RequestBody JsonRequestRequestor request) throws FriendException {
 
         logger.info("=== subscribe");
+
+        request.validate();
 
         User lisa = userService.findByEmailAddress("lisa@example.com");
         User john = userService.findByEmailAddress("john@example.com");
@@ -82,14 +94,16 @@ public class FriendManagementController {
         logger.info("=== {}", lisa.toString());
         logger.info("=== {}", john.toString());
 
-        return ResponseEntity.ok(ViewResponseEntity.SUCCESS);
+        return ResponseEntity.ok(JsonResponse.SUCCESS);
     }
 
     @JsonView(View.SuccessView.class)
-    @PutMapping("/block")
-    public ResponseEntity<ViewResponseEntity> block() {
+    @PutMapping(path = "/block", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JsonResponse> block(@RequestBody JsonRequestRequestor request) throws FriendException {
 
         logger.info("=== block");
+
+        request.validate();
 
         User andy = userService.findByEmailAddress("andy@example.com");
         User john = userService.findByEmailAddress("john@example.com");
@@ -97,19 +111,21 @@ public class FriendManagementController {
         logger.info("=== {}", andy.toString());
         logger.info("=== {}", john.toString());
 
-        return ResponseEntity.ok(ViewResponseEntity.SUCCESS);
+        return ResponseEntity.ok(JsonResponse.SUCCESS);
     }
 
     @JsonView(View.RecipientView.class)
-    @GetMapping("/broadcast")
-    public ResponseEntity<ViewResponseEntity> broadcast() {
+    @GetMapping(path = "/broadcast", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JsonResponse> broadcast(@RequestBody JsonRequestSender request) throws FriendException {
 
         logger.info("=== broadcast");
+
+        request.validate();
 
         User john = userService.findByEmailAddress("john@example.com");
 
         logger.info("=== {}", john.toString());
 
-        return ResponseEntity.ok(ViewResponseEntity.recipients(Arrays.asList(john.getEmailAddress())));
+        return ResponseEntity.ok(JsonResponse.recipients(Arrays.asList(john.getEmailAddress())));
     }
 }

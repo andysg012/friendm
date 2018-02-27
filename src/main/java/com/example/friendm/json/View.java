@@ -1,4 +1,4 @@
-package com.example.friendm.view;
+package com.example.friendm.json;
 
 public class View {
 
@@ -9,5 +9,8 @@ public class View {
     }
 
     public static interface RecipientView extends SuccessView {
+    }
+
+    public static interface ExceptionView extends SuccessView {
     }
 }
