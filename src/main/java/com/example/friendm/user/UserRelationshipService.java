@@ -42,11 +42,13 @@ public class UserRelationshipService {
         Set<String> recipients = new HashSet<>();
         List<UserRelationship> friends = userRelationshipRepository.findByUserId(senderId);
 
-        for (UserRelationship friend : friends) {
-            if (friend.getId().getRelationshipType() != UserRelationshipType.BLOCK) {
-                recipients.add(friend.getFriend().getEmailAddress());
-            } else if (friend.getId().getRelationshipType() == UserRelationshipType.BLOCK) {
-                recipients.remove(friend.getFriend().getEmailAddress());
+        if (friends != null) {
+            for (UserRelationship friend : friends) {
+                if (friend.getId().getRelationshipType() != UserRelationshipType.BLOCK) {
+                    recipients.add(friend.getFriend().getEmailAddress());
+                } else if (friend.getId().getRelationshipType() == UserRelationshipType.BLOCK) {
+                    recipients.remove(friend.getFriend().getEmailAddress());
+                }
             }
         }
 

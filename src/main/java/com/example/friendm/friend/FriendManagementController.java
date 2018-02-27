@@ -1,7 +1,6 @@
 package com.example.friendm.friend;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -11,8 +10,6 @@ import com.example.friendm.json.JsonRequestRequestor;
 import com.example.friendm.json.JsonRequestSender;
 import com.example.friendm.json.JsonResponse;
 import com.example.friendm.json.View;
-import com.example.friendm.user.User;
-import com.example.friendm.user.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import org.slf4j.Logger;
@@ -47,9 +44,9 @@ public class FriendManagementController {
 
         logger.info("=== {} {}", email1, email2);
 
-        service.connect(email1, email2);
+        boolean success = service.connect(email1, email2);
 
-        return ResponseEntity.ok(JsonResponse.SUCCESS);
+        return ResponseEntity.ok(success ? JsonResponse.SUCCESS : JsonResponse.FAILED);
     }
 
     @JsonView(View.FriendView.class)

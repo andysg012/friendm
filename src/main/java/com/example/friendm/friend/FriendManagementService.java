@@ -32,15 +32,41 @@ public class FriendManagementService {
 	private UserRelationshipService userRelationshipService;
 
 	@Transactional
-	public void connect(String email1, String email2) {
+	public boolean connect(String email1, String email2) throws FriendException {
 
-        User user1 = userService.saveIfEmailAddressNotExists(email1);
+		logger.info("=== connect");
+
+		User user1 = userService.saveIfEmailAddressNotExists(email1);
         User user2 = userService.saveIfEmailAddressNotExists(email2);
 
+		List<UserRelationship> userRelationships = user1.getFriends();
+
+		if (userRelationships != null) {
+			for (UserRelationship userRelationship : userRelationships) {
+				if (UserRelationshipType.BLOCK.equals(userRelationship.getId().getRelationshipType()))
+					if (userRelationship.getFriend().getEmailAddress().equalsIgnoreCase(email2))
+						return false;
+			}
+		}
+
+		userRelationships = user2.getFriends();
+
+		if (userRelationships != null) {
+			for (UserRelationship userRelationship : userRelationships) {
+				if (UserRelationshipType.BLOCK.equals(userRelationship.getId().getRelationshipType()))
+					if (userRelationship.getFriend().getEmailAddress().equalsIgnoreCase(email1))
+						return false;
+			}
+		}
+
 		userRelationshipService.connect(user1.getId(), user2.getId());
+
+		return true;
 	}
 
 	public Set<String> getFriends(String email) throws FriendException {
+
+		logger.info("=== getFriends");
 
         Set<String> friends = new HashSet<>();
 
@@ -48,18 +74,22 @@ public class FriendManagementService {
 
         List<UserRelationship> userRelationships = user.getFriends();
 
-		for (UserRelationship userRelationship : userRelationships) {
-			if(UserRelationshipType.FRIEND.equals(userRelationship.getId().getRelationshipType())) {
-				friends.add(userRelationship.getFriend().getEmailAddress());
+		if (userRelationships != null) {
+			for (UserRelationship userRelationship : userRelationships) {
+				if(UserRelationshipType.FRIEND.equals(userRelationship.getId().getRelationshipType())) {
+					friends.add(userRelationship.getFriend().getEmailAddress());
+				}
 			}
-        }
+		}
 
 		return friends;
 	}
 
 	public List<String> getCommonFriends(String email1, String email2) throws FriendException {
 
-        List<String> commonFriends = new ArrayList<String>();
+		logger.info("=== getCommonFriends");
+
+		List<String> commonFriends = new ArrayList<String>();
 
 		Set<String> friend1 = getFriends(email1);
 		Set<String> friend2 = getFriends(email2);
@@ -77,6 +107,8 @@ public class FriendManagementService {
 
 	public void subscribe(String requestor, String target) {
 
+		logger.info("=== subscribe");
+
 		User user1 = userService.saveIfEmailAddressNotExists(requestor);
 		User user2 = userService.saveIfEmailAddressNotExists(target);
 
@@ -85,6 +117,8 @@ public class FriendManagementService {
 
 	public void block(String requestor, String target) throws FriendException {
 
+		logger.info("=== block");
+
 		User user1 = getUser(requestor);
 		User user2 = getUser(target);
 
@@ -92,6 +126,8 @@ public class FriendManagementService {
 	}
 
 	public List<String> broadcast(String senderEmail, String text) throws FriendException {
+
+		logger.info("=== broadcast");
 
         User sender = getUser(senderEmail);
 

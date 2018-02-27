@@ -1,0 +1,122 @@
+= Friend Management API Guide
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[[overview]]
+= Overview
+
+[[resources]]
+= Resources
+
+
+
+[[resources-friend]]
+== Friend Management REST Service
+
+This the documentation of Friend Management REST service.
+
+[[resources-connect-post]]
+=== Accessing the connect POST
+
+A `POST` request is used to create connection.
+
+==== Request structure
+
+include::{snippets}/connect-post-example/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/connect-post-example/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/connect-post-example/curl-request.adoc[]
+
+[[resources-friends-get]]
+=== Accessing the friends GET
+
+A `GET` request is used to retrieve the list of friends.
+
+==== Request structure
+
+include::{snippets}/friends-get-example/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/friends-get-example/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/friends-get-example/curl-request.adoc[]
+
+[[resources-common-get]]
+=== Accessing the common GET
+
+A `GET` request is used to retrieve the list of common friends.
+
+==== Request structure
+
+include::{snippets}/common-get-example/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/common-get-example/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/common-get-example/curl-request.adoc[]
+
+[[resources-subscribe-put]]
+=== Accessing the subscribe PUT
+
+A `PUT` request is used to subscribe updates.
+
+==== Request structure
+
+include::{snippets}/subscribe-put-example/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/subscribe-put-example/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/subscribe-put-example/curl-request.adoc[]
+
+[[resources-block-put]]
+=== Accessing the block PUT
+
+A `PUT` request is used to block updates.
+
+==== Request structure
+
+include::{snippets}/block-put-example/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/block-put-example/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/block-put-example/curl-request.adoc[]
+
+[[resources-broadcast-get]]
+=== Accessing the broadcast GET
+
+A `GET` request is used to send broadcast.
+
+==== Request structure
+
+include::{snippets}/broadcast-get-example/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/broadcast-get-example/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/broadcast-get-example/curl-request.adoc[]
