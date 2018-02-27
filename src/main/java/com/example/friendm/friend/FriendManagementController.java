@@ -1,7 +1,14 @@
 package com.example.friendm.friend;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
 import com.example.friendm.user.User;
 import com.example.friendm.user.UserService;
+import com.example.friendm.view.View;
+import com.example.friendm.view.ViewResponseEntity;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +27,9 @@ public class FriendManagementController {
     @Autowired
     UserService userService;
 
+    @JsonView(View.SuccessView.class)
     @PostMapping("/connect")
-    public ResponseEntity<String> connect() {
+    public ResponseEntity<ViewResponseEntity> connect() {
 
         logger.info("=== connect");
 
@@ -31,11 +39,12 @@ public class FriendManagementController {
         userService.saveIfEmailAddressNotExists(andy);
         userService.saveIfEmailAddressNotExists(john);
 
-        return ResponseEntity.ok("Ok");
+        return ResponseEntity.ok(ViewResponseEntity.SUCCESS);
     }
 
+    @JsonView(View.FriendView.class)
     @GetMapping("/friends")
-    public ResponseEntity<String> getFriendsList() {
+    public ResponseEntity<ViewResponseEntity> getFriendsList() {
 
         logger.info("=== getFriendsList");
 
@@ -43,11 +52,12 @@ public class FriendManagementController {
 
         logger.info("=== {}", andy.toString());
 
-        return ResponseEntity.ok("Ok");
+        return ResponseEntity.ok(ViewResponseEntity.friends(Arrays.asList(andy.getEmailAddress())));
     }
 
+    @JsonView(View.FriendView.class)
     @GetMapping("/common")
-    public ResponseEntity<String> getCommonFriendsList() {
+    public ResponseEntity<ViewResponseEntity> getCommonFriendsList() {
 
         logger.info("=== getCommonFriendsList");
 
@@ -57,11 +67,12 @@ public class FriendManagementController {
         logger.info("=== {}", andy.toString());
         logger.info("=== {}", john.toString());
 
-        return ResponseEntity.ok("Ok");
+        return ResponseEntity.ok(ViewResponseEntity.friends(Arrays.asList(andy.getEmailAddress(), john.getEmailAddress())));
     }
 
+    @JsonView(View.SuccessView.class)
     @PutMapping("/subscribe")
-    public ResponseEntity<String> subscribe() {
+    public ResponseEntity<ViewResponseEntity> subscribe() {
 
         logger.info("=== subscribe");
 
@@ -71,11 +82,12 @@ public class FriendManagementController {
         logger.info("=== {}", lisa.toString());
         logger.info("=== {}", john.toString());
 
-        return ResponseEntity.ok("Ok");
+        return ResponseEntity.ok(ViewResponseEntity.SUCCESS);
     }
 
+    @JsonView(View.SuccessView.class)
     @PutMapping("/block")
-    public ResponseEntity<String> block() {
+    public ResponseEntity<ViewResponseEntity> block() {
 
         logger.info("=== block");
 
@@ -85,11 +97,12 @@ public class FriendManagementController {
         logger.info("=== {}", andy.toString());
         logger.info("=== {}", john.toString());
 
-        return ResponseEntity.ok("Ok");
+        return ResponseEntity.ok(ViewResponseEntity.SUCCESS);
     }
 
+    @JsonView(View.RecipientView.class)
     @GetMapping("/broadcast")
-    public ResponseEntity<String> broadcast() {
+    public ResponseEntity<ViewResponseEntity> broadcast() {
 
         logger.info("=== broadcast");
 
@@ -97,6 +110,6 @@ public class FriendManagementController {
 
         logger.info("=== {}", john.toString());
 
-        return ResponseEntity.ok("Ok");
+        return ResponseEntity.ok(ViewResponseEntity.recipients(Arrays.asList(john.getEmailAddress())));
     }
 }
